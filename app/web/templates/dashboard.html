@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h2>לוח בקרה כללי</h2>
+        <p class="text-muted">מדדי מערכת בזמן אמת מתוך מסד הנתונים.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Active Employees Card -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 text-center">
+                <h5 class="text-muted mb-2">עובדים פעילים</h5>
+                <h2 class="display-5 fw-bold text-primary">{{ counts.active_employees }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Domains Card -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 text-center">
+                <h5 class="text-muted mb-2">תחומי עבודה</h5>
+                <h2 class="display-5 fw-bold text-success">{{ counts.active_domains }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Users Card -->
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4 text-center">
+                <h5 class="text-muted mb-2">משתמשי מערכת</h5>
+                <h2 class="display-5 fw-bold text-info">{{ counts.active_users }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm p-4">
+            <h4>קישורים מהירים למערכת</h4>
+            <div class="d-flex flex-wrap gap-2 mt-3">
+                <a class="btn btn-primary px-4 py-2" href="{{ url_for('views.employees_list') }}">ניהול עובדים</a>
+                <a class="btn btn-success px-4 py-2" href="{{ url_for('views.domains_list') }}">תחומי עבודה</a>
+                <a class="btn btn-info text-white px-4 py-2" href="{{ url_for('views.users_list') }}">משתמשים והרשאות</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

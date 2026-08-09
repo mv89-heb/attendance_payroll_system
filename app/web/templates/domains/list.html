@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- List of domains -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-dark text-white py-3 ps-4">
+                <h5 class="mb-0">רשימת תחומי עבודה דינמיים</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">קוד תחום</th>
+                                <th>שם תחום</th>
+                                <th>עובדים פעילים</th>
+                                <th class="pe-4">סטטוס</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if domains %}
+                                {% for domain in domains %}
+                                    <tr>
+                                        <td class="ps-4 fw-bold text-dark">{{ domain.code }}</td>
+                                        <td>{{ domain.name }}</td>
+                                        <td>
+                                            <span class="badge bg-secondary">{{ domain.employee_count }}</span>
+                                        </td>
+                                        <td class="pe-4">
+                                            {% if domain.active %}
+                                                <span class="badge bg-success">פעיל</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">מושבת</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">לא נמצאו תחומי עבודה במערכת.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create domain Form -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm p-4">
+            <h4>תחום חדש במערכת</h4>
+            <p class="text-muted">יצירת תחום עבודה דינמי ללא הגבלת קוד.</p>
+            
+            <form method="POST" action="{{ url_for('views.domains_list') }}">
+                <div class="mb-3">
+                    <label for="code" class="form-label">קוד תחום ייחודי</label>
+                    <input type="text" class="form-control" id="code" name="code" placeholder="למשל: KITCHEN" required>
+                </div>
+                <div class="mb-4">
+                    <label for="name" class="form-label">שם תחום בעברית</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="למשל: מטבח" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2">שמירה במערכת</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2>הסבר חישוב שכר מפורט: {{ employee.first_name }} {{ employee.last_name }}</h2>
+        <p class="text-muted mb-0">תקופת שכר: {{ period.year }} / {{ period.month }}</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('views.period_detail', period_id=period.id) }}">חזרה לפירוט התקופה</a>
+</div>
+
+<div class="row g-4">
+    <!-- Calculation Steps -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm p-4 mb-4">
+            <h4 class="mb-3">שלבי החישוב המתמטיים (Immutable Snapshot)</h4>
+            <div class="list-group">
+                {% if snapshot and snapshot.calculation_steps %}
+                    {% for step in snapshot.calculation_steps %}
+                        <div class="list-group-item list-group-item-action p-3">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 text-dark fw-bold">{{ step.step }}</h5>
+                                <span class="text-success fw-bold">₪{{ step.result }}</span>
+                            </div>
+                            <p class="mb-1 text-muted">נוסחה: {{ step.formula }}</p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-muted">לא נמצאו שלבי חישוב מוגדרים.</p>
+                {% endif %}
+            </div>
+
+            <!-- Additions Breakdown -->
+            <h4 class="mt-4 mb-3">תוספות שכר והחזרים</h4>
+            <ul class="list-group mb-4">
+                {% if snapshot and snapshot.additions_breakdown %}
+                    {% for add in snapshot.additions_breakdown %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-bold">{{ add.name }}</span>
+                                <small class="text-muted ms-2">({{ add.type }})</small>
+                            </div>
+                            <span class="text-success fw-bold">+ ₪{{ add.amount }}</span>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="list-group-item text-muted">אין תוספות שכר לתקופה זו.</li>
+                {% endif %}
+            </ul>
+
+            <!-- Deductions Breakdown -->
+            <h4 class="mb-3">ניכויי חובה ורשות</h4>
+            <ul class="list-group">
+                {% if snapshot and snapshot.deductions_breakdown %}
+                    {% for ded in snapshot.deductions_breakdown %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-bold">{{ ded.name }}</span>
+                                <small class="text-muted ms-2">({{ ded.type }})</small>
+                            </div>
+                            <span class="text-danger fw-bold">- ₪{{ ded.amount }}</span>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="list-group-item text-muted">אין ניכויי שכר לתקופה זו.</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Summary Box -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm bg-dark text-white p-4">
+            <h4 class="mb-4 text-center">סיכום שכר סופי</h4>
+            <hr class="bg-light">
+            <div class="d-flex justify-content-between mb-3">
+                <span>סה"כ ברוטו:</span>
+                <span class="fw-bold text-success">₪{{ "%.2f"|format(result.total_gross) }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-3">
+                <span>סה"כ ניכויים:</span>
+                <span class="fw-bold text-danger">₪{{ "%.2f"|format(result.total_deductions) }}</span>
+            </div>
+            <hr class="bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="fs-5">נטו לתשלום:</span>
+                <span class="fs-4 fw-bold text-white">₪{{ "%.2f"|format(result.total_net) }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

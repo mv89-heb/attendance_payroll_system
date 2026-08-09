@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2>פירוט מחזור שכר: {{ period.year }} / {{ period.month }}</h2>
+        <p class="text-muted mb-0">טווח עבודה: {{ period.start_date }} עד {{ period.end_date }}</p>
+    </div>
+    <div class="d-flex gap-2">
+        {% if period.status == 'OPEN' %}
+            <form method="POST" action="{{ url_for('views.calculate_period_payroll_route', period_id=period.id) }}">
+                <button type="submit" class="btn btn-success px-4">הרצת חישוב שכר ⚙️</button>
+            </form>
+            <form method="POST" action="{{ url_for('views.lock_period_route', period_id=period.id) }}">
+                <button type="submit" class="btn btn-danger px-4" onclick="return confirm('האם אתה בטוח שברצונך לנעול את החודש? פעולה זו היא סופית ותנעל את כל נתוני השעות והשכר لשינויים!')">נעילה ואישור סופי (LOCKED) 🔒</button>
+            </form>
+        {% else %}
+            <span class="btn btn-outline-danger disabled">חודש נעול ומאושר לקריאה בלבד 🔒</span>
+        {% endif %}
+        <a class="btn btn-outline-secondary" href="{{ url_for('views.periods_list') }}">חזרה לרשימה</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-dark text-white py-3 ps-4">
+        <h5 class="mb-0">תוצאות חישובי השכר המערכתיים</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">מספר עובד</th>
+                        <th>שם העובד</th>
+                        <th>סה"כ ברוטו</th>
+                        <th>סה"כ ניכויים</th>
+                        <th>סה"כ נטו</th>
+                        <th class="text-center pe-4">פעולות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if results %}
+                        {% for res in results %}
+                            <tr>
+                                <td class="ps-4 fw-semibold">{{ res.employee_number }}</td>
+                                <td>{{ res.first_name }} {{ res.last_name }}</td>
+                                <td class="fw-bold text-success">₪{{ "%.2f"|format(res.total_gross) }}</td>
+                                <td class="text-danger">₪{{ "%.2f"|format(res.total_deductions) }}</td>
+                                <td class="fw-bold text-dark">₪{{ "%.2f"|format(res.total_net) }}</td>
+                                <td class="text-center pe-4">
+                                    <a class="btn btn-outline-dark btn-sm" href="{{ url_for('views.employee_payroll_detail', period_id=period.id, emp_id=res.employee_id) }}">הסבר חישוב מלא 🔍</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">טרם הורץ חישוב שכר עבור תקופה זו. לחץ על "הרצת חישוב שכר" למעלה.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

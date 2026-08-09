@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6 mx-auto">
+        <div class="card border-0 shadow-sm p-4">
+            <h3 class="mb-2">העלאת תלוש שכר לעובד 📂</h3>
+            <p class="text-muted">העלאת קובץ תלוש מקורי (PDF או תמונה) לצורך פענוח ואינטגרציית שכר חצי-אוטומטית.</p>
+            <hr>
+
+            <form method="POST" action="{{ url_for('views.payslip_upload_route', period_id=period_id, emp_id=employee_id) }}" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label class="form-label">עובד משויך:</label>
+                    <input type="text" class="form-control bg-light" value="{{ employee.first_name }} {{ employee.last_name }} ({{ employee.employee_number }})" readonly>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">מחזור שכר:</label>
+                    <input type="text" class="form-control bg-light" value="{{ period_year }} / {{ period_month }}" readonly>
+                </div>
+                <div class="mb-4">
+                    <label for="payslip_file" class="form-label fw-bold">בחר קובץ תלוש (מותר: PDF, PNG, JPG)</label>
+                    <input type="file" class="form-control" id="payslip_file" name="payslip_file" accept=".pdf,.png,.jpg,.jpeg" required>
+                    <div class="form-text">הגבלת נפח קובץ: עד 10MB. הקובץ יישמר תחת שם מוצפן ומאובטח.</div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100 py-2">העלה ופענח קובץ ⚙️</button>
+                    <a class="btn btn-outline-secondary w-100 py-2" href="{{ url_for('views.period_detail', period_id=period_id) }}">ביטול</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

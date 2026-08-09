@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2>לוח שעות שבועי (Timesheet Grid) 🗓️</h2>
+        <p class="text-muted mb-0">תצוגת שעות מאושרות לעובדים לשבוע הנוכחי.</p>
+    </div>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#manualShiftModal">הוספת שעות ידנית +</button>
+</div>
+
+<!-- Weekly Grid Card -->
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-dark text-white py-3 ps-4">
+        <h5 class="mb-0">ריכוז שעות עבודה שבועי</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover align-middle mb-0 text-center">
+                <thead>
+                    <tr class="table-dark">
+                        <th class="text-start ps-4">שם העובד</th>
+                        <th>א' (Sun)</th>
+                        <th>ב' (Mon)</th>
+                        <th>ג' (Tue)</th>
+                        <th>ד' (Wed)</th>
+                        <th>ה' (Thu)</th>
+                        <th>ו' (Fri)</th>
+                        <th>ש' (Sat)</th>
+                        <th>סה"כ שעות שבועיות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if grid_data %}
+                        {% for row in grid_data %}
+                            <tr>
+                                <td class="text-start ps-4 fw-semibold">{{ row.name }}</td>
+                                {% for day_hours in row.days %}
+                                    <td>
+                                        {% if day_hours > 0 %}
+                                            <span class="fw-bold text-success">{{ "%.2f"|format(day_hours) }}</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+                                <td class="table-secondary fw-bold text-dark">₪{{ "%.2f"|format(row.total) }}</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="9" class="text-center py-4 text-muted">אין נתוני שעות עבודה מאושרים לשבוע זה.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Manual Shift Modal -->
+<div class="modal fade" id="manualShiftModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">הוספת שעות עבודה ידנית מבוקרת (Audit Trail)</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('views.manual_shift_add_route') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="employee_id" class="form-label">עובד</label>
+                        <select class="form-select" id="employee_id" name="employee_id" required>
+                            {% for emp in employees %}
+                                <option value="{{ emp.id }}">{{ emp.first_name }} {{ emp.last_name }} ({{ emp.employee_number }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="domain_id" class="form-label">תחום עבודה</label>
+                        <select class="form-select" id="domain_id" name="domain_id" required>
+                            {% for dom in domains %}
+                                <option value="{{ dom.id }}">{{ dom.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="shift_date" class="form-label">תאריך המשמרת</label>
+                        <input type="date" class="form-control" id="shift_date" name="shift_date" required>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label for="start_time" class="form-label">שעת כניסה</label>
+                            <input type="time" class="form-control" id="start_time" name="start_time" required>
+                        </div>
+                        <div class="col-6">
+                            <label for="end_time" class="form-label">שעת יציאה</label>
+                            <input type="time" class="form-control" id="end_time" name="end_time" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">סיבת תיקון/הוספה ידנית (שקיפות מלאה)</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="2" placeholder="למשל: שכח להחתים בכניסה" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">ביטול</button>
+                    <button type="submit" class="btn btn-primary">שמירה במערכת</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

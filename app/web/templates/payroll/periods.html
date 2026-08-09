@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h2>ניהול מחזורי שכר ותקופות עבודה ₪</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPeriodModal">מחזור שכר חדש +</button>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-4">חודש עבודה</th>
+                        <th>שנה</th>
+                        <th>תאריך התחלה</th>
+                        <th>תאריך סיום</th>
+                        <th>סטטוס</th>
+                        <th>פעולות</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if periods %}
+                        {% for period in periods %}
+                            <tr>
+                                <td class="ps-4 fw-bold text-dark">
+                                    {% if period.month == 1 %}ינואר{% elif period.month == 2 %}פברואר{% elif period.month == 3 %}מרץ{% elif period.month == 4 %}אפריל{% elif period.month == 5 %}מאי{% elif period.month == 6 %}יוני{% elif period.month == 7 %}יולי{% elif period.month == 8 %}אוגוסט{% elif period.month == 9 %}ספטמבר{% elif period.month == 10 %}אוקטובר{% elif period.month == 11 %}נובמבר{% elif period.month == 12 %}דצמבר{% endif %}
+                                </td>
+                                <td>{{ period.year }}</td>
+                                <td>{{ period.start_date }}</td>
+                                <td>{{ period.end_date }}</td>
+                                <td>
+                                    {% if period.status == 'OPEN' %}
+                                        <span class="badge bg-success">פתוח לחישוב</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">נעול ומאושר (LOCKED)</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <a class="btn btn-outline-dark btn-sm" href="{{ url_for('views.period_detail', period_id=period.id) }}">פרטים וחישוב שכר</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">לא נמצאו תקופות שכר מוגדרות במערכת.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="newPeriodModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">יצירת מחזור שכר חדש</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('views.periods_list') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="year" class="form-label">שנה</label>
+                        <input type="number" class="form-control" id="year" name="year" value="2026" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="month" class="form-label">חודש</label>
+                        <select class="form-select" id="month" name="month" required>
+                            <option value="1">ינואר</option>
+                            <option value="2">פברואר</option>
+                            <option value="3">מרץ</option>
+                            <option value="4">אפריל</option>
+                            <option value="5">מאי</option>
+                            <option value="6">יוני</option>
+                            <option value="7">יולי</option>
+                            <option value="8" selected>אוגוסט</option>
+                            <option value="9">ספטמבר</option>
+                            <option value="10">אוקטובר</option>
+                            <option value="11">נובמבר</option>
+                            <option value="12">דצמבר</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="start_date" class="form-label">תאריך התחלה</label>
+                        <input type="date" class="form-control" id="start_date" name="start_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="end_date" class="form-label">תאריך סיום</label>
+                        <input type="date" class="form-control" id="end_date" name="end_date" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">ביטול</button>
+                    <button type="submit" class="btn btn-primary">שמירה במערכת</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

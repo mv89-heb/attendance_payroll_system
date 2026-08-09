@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2>מעקב משמרות פתוחות וחריגות נוכחות ⏱️</h2>
+        <p class="text-muted">רשימת עובדים המצויים כרגע במשמרת פעילה או בעלי משמרות פתוחות מימים קודמים הדורשים סגירה ידנית.</p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-dark text-white py-3 ps-4">
+        <h5 class="mb-0">משמרות פתוחות במערכת (Open Shifts)</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">מספר עובד</th>
+                        <th>שם העובד</th>
+                        <th>תחום עבודה</th>
+                        <th>תאריך משמרת</th>
+                        <th>שעת כניסה (IN)</th>
+                        <th>סטטוס אזהרה</th>
+                        <th class="text-center pe-4">פעולות סגירה מנהלית</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if open_shifts %}
+                        {% for shift in open_shifts %}
+                            <tr>
+                                <td class="ps-4 fw-semibold">{{ shift.employee_number }}</td>
+                                <td>{{ shift.first_name }} {{ shift.last_name }}</td>
+                                <td>{{ shift.domain_name }}</td>
+                                <td>{{ shift.shift_date }}</td>
+                                <td>{{ shift.start_time.strftime('%H:%M') }}</td>
+                                <td>
+                                    {% if shift.is_overdue %}
+                                        <span class="badge bg-danger">⚠ חסרה יציאה (משמרת פתוחה מימים קודמים)</span>
+                                    {% else %}
+                                        <span class="badge bg-success">משמרת פעילה כעת</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center pe-4">
+                                    <form class="d-inline" method="POST" action="{{ url_for('views.close_shift_manually_route', shift_id=shift.id) }}">
+                                        <div class="input-group input-group-sm d-inline-flex w-auto">
+                                            <input type="time" class="form-control" name="end_time" required>
+                                            <button class="btn btn-danger btn-sm" type="submit">סגור משמרת 🔒</button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">אין כרגע משמרות פתוחות הדורשות טיפול במערכת.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

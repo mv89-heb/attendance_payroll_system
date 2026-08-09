@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6 mx-auto">
+        <div class="card border-0 shadow-sm p-4">
+            <h3 class="mb-4">עובד חדש במערכת</h3>
+            
+            <form method="POST" action="{{ url_for('views.employees_new') }}">
+                <div class="mb-3">
+                    <label for="employee_number" class="form-label">מספר עובד</label>
+                    <input type="text" class="form-control" id="employee_number" name="employee_number" required>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6 col-sm-12">
+                        <label for="first_name" class="form-label">שם פרטי</label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <label for="last_name" class="form-label">שם משפחה</label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">טלפון</label>
+                    <input type="text" class="form-control" id="phone" name="phone">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">אימייל</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="kiosk_pin" class="form-label">קוד PIN אישי ל-Kiosk (מוצפן)</label>
+                    <input type="password" class="form-control" id="kiosk_pin" name="kiosk_pin" placeholder="למשל: 1234" required>
+                </div>
+                <div class="mb-4">
+                    <label for="hire_date" class="form-label">תאריך תחילת העסקה</label>
+                    <input type="date" class="form-control" id="hire_date" name="hire_date" value="2026-08-08" required>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary w-100 py-2">שמירה במערכת</button>
+                    <a class="btn btn-outline-secondary w-100 py-2" href="{{ url_for('views.employees_list') }}">ביטול</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

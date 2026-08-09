@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: attendance-payroll-prod
+    env: python
+    buildCommand: "pip install -r requirements.txt && python migrations/runner.py"
+    startCommand: "gunicorn wsgi:app"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true # Render מייצר מפתח הצפנה ייחודי ומאובטח אוטומטית
+      - key: DATABASE_URL
+        sync: false # יוזרק ישירות מחיבור ה-Pooler של Neon
+      - key: SYSTEM_TIMEZONE
+        value: "Asia/Jerusalem"
+      - key: DB_POOL_MIN
+        value: "2"
+      - key: DB_POOL_MAX
+        value: "8"
+      - key: DB_POOL_TIMEOUT
+        value: "5.0"
+      - key: RECONCILIATION_TOLERANCE
+        value: "1.00"
